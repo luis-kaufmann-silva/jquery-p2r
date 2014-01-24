@@ -6,20 +6,32 @@
 
 	var P2R = function (element, options) {
 		this.$element = $(element)
-		this.options = options;
+		this.options = $.extend({}, P2R.DEFAULTS, options);
 		
 		this.startY = null;
 		this.delta = 0;
-
+		
 		this.init();
 
 	}
 
+	P2R.DEFAULTS = {
+		directions: { // future use
+			up: false,
+			down: true
+		},
+		step: null,
+		triggerOn: 30,
+		velocity: "300ms",
+		onRefresh : null,
+	}
 
-	P2R.prototype.onTouchStart = function P2R__onTouchStart(evt){
+	P2R.prototype.onTouchStart = function P2R__onTouchStart(el, evt){
 		var x = evt.originalEvent.touches[0].pageY;
+		var self = this;
 		self.startY = x;
-		$(this).css({
+
+		el.css({
 			"webkitTransitionDuration" : "0ms",
 			"MozTransitionDuration" : "0ms",
 			"msTransitionDuration" : "0ms",
@@ -28,18 +40,25 @@
 		});
 	}
 
-	P2R.prototype.onTouchMove = function P2R__onTouchMove(evt){
+	P2R.prototype.onTouchMove = function P2R__onTouchMove(el, evt){
+		var self = this;
 		var y = evt.originalEvent.touches[0].pageY;
-		var $this = $(this);
 		if (self.startY < y){
 			self.delta = parseInt(y - self.startY);
 
+			var percent = parseInt((self.delta * 100 / self.options.triggerOn));
+			
+			
+			if (self.delta >= self.options.triggerOn){
+				self.options.onRefresh && self.options.onRefresh.apply(el, [evt]);
+				
+				if (self.options.cancelOnTrigger) return false;
+			}else{
+				
+				self.options.step && self.options.step.apply(el, [ percent ]);
+			}
 
-			// if (delta >= self.options.activate){
-			// 	//self.options.onComplete && self.options.onComplete.apply($(this));
-			// }
-
-			$this.css({
+			el.css({
 				"webkitTransform" : 'translate(0, ' + self.delta + 'px)' + 'translateX(0)',
 				"msTransform" : 'translateY(' + self.delta + 'px)',
 				"MozTransform" : 'translateY(' + self.delta + 'px)',
@@ -48,14 +67,15 @@
 		}
 	}
 
-	P2R.prototype.onTouchEnd = function P2R__onTouchEnd(evt){
-		$(this).css({
+	P2R.prototype.onTouchEnd = function P2R__onTouchEnd(el, evt){
+		var self = this;
+		el.css({
 
-			"webkitTransitionDuration" : "300ms",
-			"MozTransitionDuration" : "300ms",
-			"msTransitionDuration" : "300ms",
-			"OTransitionDuration" : "300ms",
-			"transitionDuration" : "300ms",
+			"webkitTransitionDuration" : "" + self.options.velocity,
+			"MozTransitionDuration" : "" + self.options.velocity,
+			"msTransitionDuration" : "" + self.options.velocity,
+			"OTransitionDuration" : "" + self.options.velocity,
+			"transitionDuration" : "" + self.options.velocity,
 
 			"webkitTransform" : 'translate(0, 0px)' + 'translateX(0)',
 			"msTransform" : 'translateY(0px)',
@@ -64,35 +84,29 @@
 		});
 	}
 	
-	P2R.prototype.proxy = function P2R__proxy(fn){
-		console.log(this);
-		fn.self = this;
-		return fn;
-	}
+	// P2R.prototype.proxy = function P2R__proxy(fn, self){
+
+	// 	fn.self = self;
+	// 	return fn;
+	// }
 
 	P2R.prototype.init = function P2R__init(){
 		var self = this;
-		console.log("PRE");
-		console.log(self);
 		self.
 			$element
-			.on("touchstart", self.proxy(self.onTouchStart))
-			.on("touchmove", self.proxy(self.onTouchMove))
-			.on("touchend", self.proxy(self.onTouchEnd))
-		console.log("/INIT");
+			.on("touchstart", function P2R__touchstart(evt){
+				self.onTouchStart($(this), evt);
+			})
+			.on("touchmove", function P2R__touchmove(evt){
+				self.onTouchMove($(this), evt);
+			})
+			.on("touchend", function P2R__touchend(evt){
+				self.onTouchEnd($(this), evt);
+			})
 	}
 
 	P2R.dataKey = 'tml.P2R';
 
-	P2R.DEFAULTS = {
-		// directions: { // future use
-		// 	up: false,
-		// 	down: true
-		// },
-		step: null,
-		activate: 30,
-		onComplete : null,
-	}
 
 
 	

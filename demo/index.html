@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title></title>
 	<script src="jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../p2r.js" type="text/javascript" charset="utf-8"></script>
@@ -10,8 +11,10 @@
 <body>
 
 <section>
-	<div></div>
-	<div class='refresh-container'>
+	<div id="indicator" style="height: 100px;postiion: absolute;margin-bottom: -100px;z-index: 0;background-color: red;transform: rotate(180deg)">
+		Refresh indicator
+	</div>
+	<div class='refresh-container' style='position: relative; background-color: green'>
 		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

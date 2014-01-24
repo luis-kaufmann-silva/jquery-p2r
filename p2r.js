@@ -10,16 +10,17 @@
 		
 		this.startY = null;
 		this.delta = 0;
+		this.isMoving = false;
 		
 		this.init();
 
 	}
 
 	P2R.DEFAULTS = {
-		directions: { // future use
-			up: false,
-			down: true
-		},
+		// directions: { // future use
+		// 	up: false,
+		// 	down: true
+		// },
 		step: null,
 		triggerOn: 30,
 		velocity: "300ms",
@@ -42,6 +43,7 @@
 
 	P2R.prototype.onTouchMove = function P2R__onTouchMove(el, evt){
 		var self = this;
+		self.isMoving = true;
 		var y = evt.originalEvent.touches[0].pageY;
 		if (self.startY < y){
 			self.delta = parseInt(y - self.startY);
@@ -51,11 +53,14 @@
 			
 			if (self.delta >= self.options.triggerOn){
 				self.options.onRefresh && self.options.onRefresh.apply(el, [evt]);
-				
-				if (self.options.cancelOnTrigger) return false;
+
+				self.reset(el);
+				self.options.step && self.options.step.apply(el, [ 100 ]);
+
+				return false;
 			}else{
-				
-				self.options.step && self.options.step.apply(el, [ percent ]);
+				if (self.isMoving)
+					self.options.step && self.options.step.apply(el, [ percent ]);
 			}
 
 			el.css({
@@ -67,8 +72,9 @@
 		}
 	}
 
-	P2R.prototype.onTouchEnd = function P2R__onTouchEnd(el, evt){
+	P2R.prototype.reset = function P2R__reset(el){
 		var self = this;
+		self.isMoving = false;
 		el.css({
 
 			"webkitTransitionDuration" : "" + self.options.velocity,
@@ -82,6 +88,14 @@
 			"MozTransform" : 'translateY(0px)',
 			"OTransform" : 'translateY(0px)'
 		});
+	}
+
+	P2R.prototype.onTouchEnd = function P2R__onTouchEnd(el, evt){
+		var self = this;
+		if (self.isMoving){
+			self.reset(el);
+		}
+
 	}
 	
 	// P2R.prototype.proxy = function P2R__proxy(fn, self){

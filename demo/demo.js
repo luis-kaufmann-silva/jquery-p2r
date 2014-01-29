@@ -1,17 +1,26 @@
 $("body").ready(function(){
 
 
+	var indicator = $("#indicator");
+
 	$(".refresh-container").pullToRefresh({
-		step: function(percent){
-			
-			var deg = (180 - (percent * 180 / 100))
-			$("#indicator").css("transform", "rotate("+deg+"deg)");
+		onMove: function onMove(percent){
+			//indicator.append("MOVE<br>");
+			indicator.html("Pulling");
 		},
-		cancelOnTrigger: true,
-		triggerOn: 80,
-		onRefresh: function(e){
-			
-		}
+		onStart: function onStart(y){
+			indicator.html("Start pull");
+		},
+		onEnd: function onEnd(delta){
+			indicator.append("<br>Stop pull");
+		},
+		onRefresh : function onRefresh(delta){
+			indicator.html("REFRESH \\o/");
+			alert("REFRESH")
+		},
+
+		refreshOn: 120,
+		velocity: "1000ms",
 	});
 
 });

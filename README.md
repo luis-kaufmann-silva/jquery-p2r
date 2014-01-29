@@ -1,4 +1,29 @@
-jquery-p2r
+jQuery - Pull to Refresh
 ==========
 
-jQuery plugin for pull to refresh (p2r)
+A simple jQuery plugin to perform pull to refresh (p2r). Example of use:
+
+```js
+$(".refresh-container").pullToRefresh({
+		onMove: function onMove(percent){
+			// move to down
+		},
+		onStart: function onStart(y){
+			// start callback
+		},
+		onEnd: function onEnd(delta){
+			// on end callback (after onRefresh)
+		},
+		onRefresh : function onRefresh(delta){
+			// on delta => refreshOn
+		},
+
+		refreshOn: 120,// (int) px to refresh
+		velocity: "1000ms", // (string) transition velocity
+	});
+```
+
+See [this demo][1] (needs touch support)
+
+
+  [1]: http://luis.com

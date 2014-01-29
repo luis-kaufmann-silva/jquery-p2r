@@ -3,27 +3,27 @@
 <head>
 	<meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title></title>
+	<title>Pull 2 refresh demo</title>
+	<link rel="stylesheet" href="style.css">
 	<script src="jquery-2.0.3.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../p2r.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../jquery.p2r.js" type="text/javascript" charset="utf-8"></script>
 	<script src="demo.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 
 <section>
-	<div id="indicator" style="height: 100px;postiion: absolute;margin-bottom: -100px;z-index: 0;background-color: red;transform: rotate(180deg)">
-		Refresh indicator
+	<div id="indicator">
+		<span>Hi :D</span>
 	</div>
-	<div class='refresh-container' style='position: relative; background-color: green'>
-		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-		consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-		cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-		proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	<div class='refresh-container'>
+		Pull this to refresh
 	</div>
 	
 </section>
+
+<div class='info'>
+	Attention, you need to be on a device with touch support, or use the <a href="https://developer.mozilla.org/en-US/docs/Tools/Responsive_Design_View" target="_blank">"Simulate touch events"</a> button on Mozilla Firefox
+</div>
 
 
 </body>

@@ -16,7 +16,6 @@ $("body").ready(function(){
 		},
 		onRefresh : function onRefresh(delta){
 			indicator.html("REFRESH \\o/");
-			alert("REFRESH")
 		},
 
 		refreshOn: 120,

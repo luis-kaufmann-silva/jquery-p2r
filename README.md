@@ -26,4 +26,4 @@ $(".refresh-container").pullToRefresh({
 See [this demo][1] (needs touch support)
 
 
-  [1]: http://luis.com
+  [1]: http://luis-kaufmann-silva.github.io/jquery-p2r/demo/index.html

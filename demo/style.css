@@ -4,35 +4,35 @@ body{
 	padding: 0px;
 }
 
+section{
+	width: 50%;
+	float: left;
+}
+
 *{
 	box-sizing: border-box;
 }
 
 #indicator{
+	margin: 10px;
+	
 	height: 100px;
-	postiion: absolute;
-	margin-bottom: -130px;
+	/*postiion: absolute;
+	margin-bottom: -130px;*/
 	z-index: 0;
 	background-color: #ff4136;
 	color: white;
 	padding: 15px;
 	
-	-webkit-box-shadow: inset 0px 0px 10px 1px #555;
-	-moz-box-shadow: inset 0px 0px 10px 1px #555;
-	-ms-box-shadow: inset 0px 0px 10px 1px #555;
-	-o-box-shadow: inset 0px 0px 10px 1px #555;
-	box-shadow: inset 0px 0px 10px 1px #555;
+	
 
 
 }
 
 .refresh-container{
-	-webkit-box-shadow: inset 0px 0px 10px 1px #555;
-	-moz-box-shadow: inset 0px 0px 10px 1px #555;
-	-ms-box-shadow: inset 0px 0px 10px 1px #555;
-	-o-box-shadow: inset 0px 0px 10px 1px #555;
-	box-shadow: inset 0px 0px 10px 1px #555;
-
+	
+	margin: 10px;
+	border: solid 1px #3edc50;
 
 	position: relative;
 	background-color: #2ecc40;

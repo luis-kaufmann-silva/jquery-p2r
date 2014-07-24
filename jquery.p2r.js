@@ -15,30 +15,56 @@
         };
 
         this.positions = {
-            y: 0,
-            delta: 0
+            startY: 0,
+            startX: 0,
         }
     };
 
+
     // infrastucture
 
-    PullToRefresh.key = ['luiskaufmannsilva', 'pulltorefresh'].join(".");
+    PullToRefresh.key = ['pulltorefresh'].join(".");
 
     PullToRefresh.DEFAULTS = {
-        refreshOn: 30,
-        autoinit: true,
-        velocity: "300ms",
-        delay: "300ms",
-        simulatetouch: true,
-        // prefix: 'p2r-'
+        refresh: 100, // value in "px" to fire "refresh" event
+        lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
+        resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
+        autoinit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
+        velocity: "100ms", // velocity of animation in "ms"
+        simulateTouch: true, // simulate touch events with mouse events
+        tolerance: 10 // integer with the tolerance variation of the y axis
     };
 
     PullToRefresh.prototype.namespace = function _pulltorefresh__namespace(eventName) {
-        return [
+        var namespace = [
             eventName,
             PullToRefresh.key
         ].join(".");
+
+        return namespace;
     }
+
+    PullToRefresh.debounce = function _pulltorefresh__debounce(func, threshold, context) {
+
+        var timeout;
+
+        return function debounced() {
+            var obj = this,
+                args = arguments;
+
+            function delayed() {
+                func.apply(context || obj, args);
+                timeout = null;
+            };
+
+            if (timeout)
+                clearTimeout(timeout);
+
+            timeout = setTimeout(delayed, threshold || 300);
+        };
+    }
+
+
     /**
      * Construct method to bind all events to respectives elements
      * @return
@@ -46,25 +72,28 @@
     PullToRefresh.prototype.construct = function _pulltorefresh__construct() {
         var self = this;
         if (!(PullToRefresh.support.browser.ie10 || PullToRefresh.support.browser.ie11)) {
+
             if (PullToRefresh.support.touch) {
                 self.$element
                     .on(self.namespace('touchstart'), self.proxy(self.onTouchStart, self))
                     .on(self.namespace('touchmove'), self.proxy(self.onTouchMove, self))
                     .on(self.namespace('touchend'), self.proxy(self.onTouchEnd, self));
             }
+
             if (self.options.simulatetouch) {
                 self.$element
                     .on(self.namespace('mousedown'), self.proxy(self.onTouchStart, self));
                 $(document)
                     .on(self.namespace('mousemove'), self.proxy(self.onTouchMove, self))
-                    .on(self.namespace('mouseend'), self.proxy(self.onTouchEnd, self));
+                    .on(self.namespace('mouseup'), self.proxy(self.onTouchEnd, self));
             }
+
         } else {
             self.$element
                 .on(self.namespace(PullToRefresh.events.start), self.proxy(self.onTouchStart, self))
             $(document)
-                .on(self.namespace(PullToRefresh.events.start), self.proxy(self.onTouchMove, self))
-                .on(self.namespace(PullToRefresh.events.start), self.proxy(self.onTouchEnd, self));
+                .on(self.namespace(PullToRefresh.events.move), self.proxy(self.onTouchMove, self))
+                .on(self.namespace(PullToRefresh.events.end), self.proxy(self.onTouchEnd, self));
         }
     };
 
@@ -82,7 +111,7 @@
             .off(this.namespace(PullToRefresh.events.start));
         $(document)
             .off(this.namespace('mousemove'))
-            .off(this.namespace('mouseend'))
+            .off(this.namespace('mouseup'))
             .off(this.namespace(PullToRefresh.events.start))
             .off(this.namespace(PullToRefresh.events.start));
 
@@ -180,7 +209,7 @@
 
     // infrastucture
 
-    PullToRefresh.prototype.transform = function PullToRefresh__transform(style, delta) {
+    PullToRefresh.prototype.transform = function _pulltorefresh__transform(style, delta) {
         style.webkitTransform = 'translate(0, ' + delta + 'px)' + 'translateZ(0)';
         style.msTransform =
             style.MozTransform =
@@ -199,20 +228,39 @@
 
 
 
-    PullToRefresh.prototype.onTouchStart = function _pulltorefresh__ontouchstart(event) {
-        'use strict';
-        var self = this;
-
-        // if not left click
-        if (event.which !== 1) {
-            return;
+    PullToRefresh.prototype.getAxis = function _pulltorefresh__getAxis(event, isTouchEvent) {
+        return {
+            x: isTouchEvent ? (event.targetTouches || event.originalEvent.targetTouches)[0].pageX : (event.pageX || event.clientX),
+            y: isTouchEvent ? (event.targetTouches || event.originalEvent.targetTouches)[0].pageY : (event.pageY || event.clientY)
         }
 
-        self.flags.isTouched = true;
-        var isTouchEvent = event.type === 'touchstart';
+    }
 
-        var pageX = isTouchEvent ? event.targetTouches[0].pageX : (event.pageX || event.clientX);
-        var pageY = isTouchEvent ? event.targetTouches[0].pageY : (event.pageY || event.clientY);
+    PullToRefresh.prototype.onTouchStart = function _pulltorefresh__ontouchstart(event) {
+        'use strict';
+        var self = this,
+            isTouchEvent = event.type === 'touchstart';
+
+
+        // if not left click
+        if (!isTouchEvent && event.which !== 1) {
+            return;
+        }
+        console.log("lol")
+
+        self.flags.touched = true;
+        self.flags.isTouch = event.type === 'touchstart';
+
+
+        // if (self.flags.isTouch !== isTouchEvent) {
+        //     return;
+        // }
+
+        var axis = self.getAxis(event, isTouchEvent);
+
+        self.positions.startY = axis.y;
+
+
 
         //Start Touches to check the scrolling
         // _this.touches.startX = _this.touches.currentX = pageX;
@@ -221,9 +269,8 @@
         // _this.touches.start = _this.touches.current = isH ? pageX : pageY;
 
 
-        this.$element.html("x: " + pageX + " y: " + pageY)
+        this.$element.html("x: " + axis.x + " y: " + axis.y)
 
-        // self.flags.isTouched = true;
         // self.flags.isMoving = true;
         // self.transition(el.style, "0ms");
 
@@ -241,16 +288,34 @@
         // if (self.options.onStart) {
         //   self.options.onStart.apply(el, [self.startY]);
         // }
+        self.$element.trigger(self.namespace('start'))
+        event.stopPropagation();
+        event.preventDefault();
     };
 
 
-    PullToRefresh.prototype.onTouchMove = function PullToRefresh__onTouchMove(event, el) {
+    PullToRefresh.prototype.debouncedOnMove = (function () {
+        return PullToRefresh.debounce(function () {
+            var self = this;
+            self.$element.trigger(self.namespace('move'));
+        }, 12, this);
+    })()
 
-        var self = this;
-        var isTouchEvent = event.type === 'touchmove';
 
-        var pageX = isTouchEvent ? (event.targetTouches || event.originalEvent.targetTouches)[0].pageX : (event.pageX || event.clientX);
-        var pageY = isTouchEvent ? (event.targetTouches || event.originalEvent.targetTouches)[0].pageY : (event.pageY || event.clientY);
+    PullToRefresh.prototype.onTouchMove = function PullToRefresh__onTouchMove(event) {
+        var self = this,
+            isTouchEvent = event.type === 'touchmove';
+
+
+        // if not touched or hasTouchEvent and the eventType is a desktop event cancel the move
+        if (!(self.flags.touched) || (self.flags.isTouch && event.type === 'mousemove')) {
+            return;
+        }
+
+        var axis = self.getAxis(event, isTouchEvent);
+
+
+
 
         //Start Touches to check the scrolling
         // _this.touches.startX = _this.touches.currentX = pageX;
@@ -259,76 +324,105 @@
         // _this.touches.start = _this.touches.current = isH ? pageX : pageY;
 
 
-        this.$element.html("x: " + pageX + " y: " + pageY)
+        this.$element.html("x: " + axis.x + " y: " + axis.y)
 
-        // if not touched or hasTouchEvent and the eventType is a desktop event cancel the move
-        if (!(self.flags.isTouched) || (self.flags.isTouchEvent && event.type === 'mousemove')) {
+        // var y = 0;
+
+        // if (evt.touches && evt.touches.length > 0) {
+        //     y = (evt.touches[0] || evt.originalEvent.touches[0]).pageY;
+        // } else {
+        //     y = evt.clientY;
+        // }
+
+
+
+        if (!self.positions.startY) {
+            self.positions.startY = axis.y;
+        }
+
+        var delta = (axis.y - self.positions.startY);
+
+        //console.log(delta)
+
+        // var percent = (delta / self.options.refreshOn) * 100;
+
+        // if (self.options.onMove) {
+        //     self.options.onMove.apply(el, [percent]);
+        // }
+
+        if (delta >= self.options.refresh) {
+            // fire refresh
+            // 
+
+            if (self.options.resetRefresh) {
+                this.reset();
+                return;
+            }
+
+            if (self.options.lockRefresh) {
+                return;
+            }
+
+        }
+
+
+
+
+
+        // if (delta >= self.options.refreshOn) {
+        //     if (self.options.onRefresh) {
+        //         self.options.onRefresh.apply(el, [delta]);
+        //     }
+        //     self.reset(el);
+        //     return false;
+        // }
+
+        // if (delta <= 0) {
+        //     // no move negative
+        //     if (self.currentDelta > 0) {
+        //         self.currentDelta = 0;
+        //         self.transform(el.style, 0);
+        //     }
+        //     return false;
+        // }
+
+        // self.currentDelta = delta;
+
+        //self.debouncedOnMove();
+        //self.$element.trigger(self.namespace('move'))
+        console.log(delta);
+        self.transition(self.$element[0].style, 0)
+        delta > 0 && self.transform(self.$element[0].style, delta);
+    };
+
+    PullToRefresh.prototype.reset = function PullToRefresh__reset() {
+        console.log('reset')
+        this.transition(this.$element[0].style, this.options.velocity);
+        this.transform(this.$element[0].style, 0);
+        this.flags.touched = false;
+        this.flags.isTouch = false;
+        this.positions.startY = false;
+    };
+
+    /**
+     * Method to listen the end of touch event
+     * @param  {object} event Evento fired by browser
+     * @return {void}
+     */
+    PullToRefresh.prototype.onTouchEnd = function PullToRefresh__onTouchEnd(event) {
+        console.log('touchend')
+        if (!this.flags.touched) {
             return;
         }
-
-        if (!self.flags.isMoving) {
-            return false;
-        }
-
-        var y = 0;
-
-        if (evt.touches && evt.touches.length > 0) {
-            y = (evt.touches[0] || evt.originalEvent.touches[0]).pageY;
-        } else {
-            y = evt.clientY;
-        }
+        this.reset();
+        this.positions.startY = 0;
 
 
+        this.$element.trigger(this.namespace('end'));
 
-        if (!self.startY) {
-            self.startY = y;
-        }
+        event.stopPropagation();
+        event.preventDefault();
 
-        var delta = (y - self.startY);
-
-        var percent = (delta / self.options.refreshOn) * 100;
-
-        if (self.options.onMove) {
-            self.options.onMove.apply(el, [percent]);
-        }
-
-        if (delta >= self.options.refreshOn) {
-            if (self.options.onRefresh) {
-                self.options.onRefresh.apply(el, [delta]);
-            }
-            self.reset(el);
-            return false;
-        }
-
-        if (delta <= 0) {
-            // no move negative
-            if (self.currentDelta > 0) {
-                self.currentDelta = 0;
-                self.transform(el.style, 0);
-            }
-            return false;
-        }
-
-        self.currentDelta = delta;
-
-        self.transform(el.style, delta);
-    };
-
-    PullToRefresh.prototype.reset = function PullToRefresh__reset(el) {
-        this.transition(el.style, this.options.velocity);
-        this.transform(el.style, 0);
-        this.isMoving = false;
-        this.startY = null;
-    };
-
-    PullToRefresh.prototype.onTouchEnd = function PullToRefresh__onTouchEnd(evt, el) {
-        console.log('onTouchEnd')
-        // var self = this;
-        // if (self.options.onEnd) {
-        //     self.options.onEnd.apply(el, [self.currentDelta]);
-        // }
-        // self.reset(el);
-        // evt.preventDefault();
     };
 
 

@@ -1,5 +1,7 @@
 $("body").ready(function () {
 
-  $(".refresh-container").pullToRefresh();
+    $(".p2r")
+        .pullToRefresh()
+        
 
 });

@@ -12,11 +12,13 @@
             moving: false,
             touched: false,
             isTouch: false,
+            refreshed: false,
         };
 
         this.positions = {
             startY: 0,
             startX: 0,
+            lastStep: 0,
         }
     };
 
@@ -26,11 +28,12 @@
     PullToRefresh.key = ['pulltorefresh'].join(".");
 
     PullToRefresh.DEFAULTS = {
-        refresh: 100, // value in "px" to fire "refresh" event
+        sensibility: 10, // number of pixels to each call of "move" event
+        refresh: 100, // value in pixels to fire "refresh" event
         lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
         resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
-        autoinit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
-        velocity: "100ms", // velocity of animation in "ms"
+        autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
+        resetVelocity: "100ms", // velocity of reset animation in milliseconds
         simulateTouch: true, // simulate touch events with mouse events
         tolerance: 10 // integer with the tolerance variation of the y axis
     };
@@ -64,7 +67,6 @@
         };
     }
 
-
     /**
      * Construct method to bind all events to respectives elements
      * @return
@@ -78,14 +80,15 @@
                     .on(self.namespace('touchstart'), self.proxy(self.onTouchStart, self))
                     .on(self.namespace('touchmove'), self.proxy(self.onTouchMove, self))
                     .on(self.namespace('touchend'), self.proxy(self.onTouchEnd, self));
+
             }
 
-            if (self.options.simulatetouch) {
+            if (self.options.simulateTouch) {
                 self.$element
                     .on(self.namespace('mousedown'), self.proxy(self.onTouchStart, self));
                 $(document)
-                    .on(self.namespace('mousemove'), self.proxy(self.onTouchMove, self))
-                    .on(self.namespace('mouseup'), self.proxy(self.onTouchEnd, self));
+                    .on(self.namespace('mousemove'), self.$element, self.proxy(self.onTouchMove, self))
+                    .on(self.namespace('mouseup'), self.$element, self.proxy(self.onTouchEnd, self));
             }
 
         } else {
@@ -204,16 +207,62 @@
 
 
 
-    PullToRefresh.prototype.proxy = $.proxy;
+    PullToRefresh.prototype.proxy = (function () {
 
+        var has_bind = !!(Function.prototype.bind);
+
+
+        if (has_bind) {
+
+            return function _pulltorefresh__bind(fn, context) {
+                return fn.bind(context);
+            }
+        } else {
+            if ($.proxy) {
+                return $.proxy;
+            } else {
+                return function _pulltorefresh__jquery_like_proxy(fn, context) {
+                    var tmp, args, proxy;
+
+                    if (typeof context === "string") {
+                        tmp = fn[context];
+                        context = fn;
+                        fn = tmp;
+                    }
+
+                    // Quick check to determine if target is callable, in the spec
+                    // this throws a TypeError, but we will just return undefined.
+                    if (typeof (fn) === 'function') {
+                        return undefined;
+                    }
+
+                    args = Array.prototype.slice.call(arguments, 2);
+
+                    // Simulated bind
+                    proxy = function () {
+                        return fn.apply(context || this, args.concat(slice.call(arguments)));
+                    };
+
+                    // Set the guid of unique handler to the same of original handler, so it can be removed
+                    proxy.guid = fn.guid = fn.guid || jQuery.guid++;
+
+                    return proxy;
+                }
+            }
+        }
+
+    })();
 
     // infrastucture
 
     PullToRefresh.prototype.transform = function _pulltorefresh__transform(style, delta) {
-        style.webkitTransform = 'translate(0, ' + delta + 'px)' + 'translateZ(0)';
+
+        style.webkitTransform = 'translate(0, ' + delta + 'px) ' + 'translateZ(0)';
         style.msTransform =
+            style.MsTransform =
             style.MozTransform =
-            style.OTransform = 'translateY(' + delta + 'px)';
+            style.OTransform =
+            style.transform = 'translateY(' + delta + 'px)';
     };
 
 
@@ -237,28 +286,28 @@
     }
 
     PullToRefresh.prototype.onTouchStart = function _pulltorefresh__ontouchstart(event) {
-        'use strict';
-        var self = this,
-            isTouchEvent = event.type === 'touchstart';
+        var isTouchEvent = event.type === 'touchstart';
+
 
 
         // if not left click
         if (!isTouchEvent && event.which !== 1) {
             return;
         }
-        console.log("lol")
 
-        self.flags.touched = true;
-        self.flags.isTouch = event.type === 'touchstart';
+        this.flags.touched = true;
+        this.flags.refreshed = false;
+        this.flags.isTouch = event.type === 'touchstart';
 
 
-        // if (self.flags.isTouch !== isTouchEvent) {
+        // if (this.flags.isTouch !== isTouchEvent) {
         //     return;
         // }
 
-        var axis = self.getAxis(event, isTouchEvent);
+        var axis = this.getAxis(event, isTouchEvent);
 
-        self.positions.startY = axis.y;
+        this.positions.startY = axis.y;
+        this.positions.startX = axis.x;
 
 
 
@@ -269,10 +318,10 @@
         // _this.touches.start = _this.touches.current = isH ? pageX : pageY;
 
 
-        this.$element.html("x: " + axis.x + " y: " + axis.y)
 
-        // self.flags.isMoving = true;
-        // self.transition(el.style, "0ms");
+
+        // this.flags.isMoving = true;
+        // this.transition(el.style, "0ms");
 
         // var y = 0;
 
@@ -282,13 +331,14 @@
         //   y = evt.clientY;
         // }
 
-        // if (!self.startY) {
-        //   self.startY = y;
+        // if (!this.startY) {
+        //   this.startY = y;
         // }
-        // if (self.options.onStart) {
-        //   self.options.onStart.apply(el, [self.startY]);
+        // if (this.options.onStart) {
+        //   this.options.onStart.apply(el, [this.startY]);
         // }
-        self.$element.trigger(self.namespace('start'))
+        this.$element.trigger(this.namespace('start'))
+        this.transition(this.$element[0].style, "0ms");
         event.stopPropagation();
         event.preventDefault();
     };
@@ -303,120 +353,92 @@
 
 
     PullToRefresh.prototype.onTouchMove = function PullToRefresh__onTouchMove(event) {
-        var self = this,
-            isTouchEvent = event.type === 'touchmove';
 
+        var isTouchEvent = event.type === 'touchmove',
+            delta,
+            step,
+            percentage,
+            axis;
 
         // if not touched or hasTouchEvent and the eventType is a desktop event cancel the move
-        if (!(self.flags.touched) || (self.flags.isTouch && event.type === 'mousemove')) {
+        if (!(this.flags.touched) || (this.flags.isTouch && event.type === 'mousemove')) {
             return;
         }
 
-        var axis = self.getAxis(event, isTouchEvent);
+        // get axis pair
+        axis = this.getAxis(event, isTouchEvent);
 
+        // get variation of position between start y axis and current y axis
+        delta = (axis.y - this.positions.startY);
 
-
-
-        //Start Touches to check the scrolling
-        // _this.touches.startX = _this.touches.currentX = pageX;
-        // _this.touches.startY = _this.touches.currentY = pageY;
-
-        // _this.touches.start = _this.touches.current = isH ? pageX : pageY;
-
-
-        this.$element.html("x: " + axis.x + " y: " + axis.y)
-
-        // var y = 0;
-
-        // if (evt.touches && evt.touches.length > 0) {
-        //     y = (evt.touches[0] || evt.originalEvent.touches[0]).pageY;
-        // } else {
-        //     y = evt.clientY;
-        // }
-
-
-
-        if (!self.positions.startY) {
-            self.positions.startY = axis.y;
+        // reset on horizontal scroll tolerance fail
+        if ((axis.x - this.positions.startX) > this.options.tolerance) {
+            this.reset();
+            return;
         }
 
-        var delta = (axis.y - self.positions.startY);
+        if (delta < 0) return;
 
-        //console.log(delta)
+        // fires the refresh event if necessary and not has been triggered before
+        if (delta >= this.options.refresh && !this.flags.refreshed) {
+            // fire refresh event
+            this.$element.trigger(this.namespace('refresh'));
 
-        // var percent = (delta / self.options.refreshOn) * 100;
+            // set flag to not trigger this event until next touchend
+            this.flags.refreshed = true;
 
-        // if (self.options.onMove) {
-        //     self.options.onMove.apply(el, [percent]);
-        // }
-
-        if (delta >= self.options.refresh) {
-            // fire refresh
-            // 
-
-            if (self.options.resetRefresh) {
+            // if configured to reset on refresh, do it
+            if (this.options.resetRefresh) {
                 this.reset();
                 return;
             }
 
-            if (self.options.lockRefresh) {
+            if (this.options.lockRefresh) {
                 return;
             }
 
         }
 
+        // current step, necessary to define if call move event
+        step = parseInt(delta / this.options.sensibility, 10);
+
+        // if is a next step, fire event and inform the perncentage of pull
+        if (this.positions.lastStep != step) {
+            this.positions.lastStep = step;
+            percentage = parseInt(delta / 100 * this.options.refresh, 10);
+            this.$element.trigger(this.namespace('move'), percentage);
+        }
 
 
+        // finally tranform element to current touch position
+        this.transform(this.$element[0].style, delta);
 
-
-        // if (delta >= self.options.refreshOn) {
-        //     if (self.options.onRefresh) {
-        //         self.options.onRefresh.apply(el, [delta]);
-        //     }
-        //     self.reset(el);
-        //     return false;
-        // }
-
-        // if (delta <= 0) {
-        //     // no move negative
-        //     if (self.currentDelta > 0) {
-        //         self.currentDelta = 0;
-        //         self.transform(el.style, 0);
-        //     }
-        //     return false;
-        // }
-
-        // self.currentDelta = delta;
-
-        //self.debouncedOnMove();
-        //self.$element.trigger(self.namespace('move'))
-        console.log(delta);
-        self.transition(self.$element[0].style, 0)
-        delta > 0 && self.transform(self.$element[0].style, delta);
     };
 
+
     PullToRefresh.prototype.reset = function PullToRefresh__reset() {
-        console.log('reset')
-        this.transition(this.$element[0].style, this.options.velocity);
+        this.transition(this.$element[0].style, this.options.resetVelocity);
         this.transform(this.$element[0].style, 0);
         this.flags.touched = false;
         this.flags.isTouch = false;
+        this.flags.refreshed = false;
         this.positions.startY = false;
     };
 
     /**
      * Method to listen the end of touch event
-     * @param  {object} event Evento fired by browser
+     * @param  {object} event Event triggered by browser
      * @return {void}
      */
     PullToRefresh.prototype.onTouchEnd = function PullToRefresh__onTouchEnd(event) {
-        console.log('touchend')
         if (!this.flags.touched) {
             return;
         }
-        this.reset();
-        this.positions.startY = 0;
 
+        this.positions.startY = 0;
+        this.positions.startX = 0;
+
+        this.reset();
 
         this.$element.trigger(this.namespace('end'));
 
@@ -447,7 +469,7 @@
 
                 $this.data(PullToRefresh.key, (data = new PullToRefresh(this, options)))
 
-                if (options.autoinit) {
+                if (options.autoInit) {
 
                     data.construct();
                 }

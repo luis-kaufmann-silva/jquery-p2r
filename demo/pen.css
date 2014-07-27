@@ -1,0 +1,8 @@
+@import url('http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
+
+body{
+  min-height: 20px;
+  padding: 0px;
+  margin: 0px;
+  background-color: #F5F5F5;
+}

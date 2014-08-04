@@ -312,6 +312,8 @@
         // not move with negative
         if (delta < 0) return;
 
+
+
         // fires the refresh event if necessary and not has been triggered before
         if (delta >= this.options.refresh && !this.flags.refreshed) {
 
@@ -327,10 +329,10 @@
                 return;
             }
 
-            if (this.options.lockRefresh) {
-                return;
-            }
+        }
 
+        if (this.flags.refreshed && this.options.lockRefresh) {
+            return;
         }
 
         // current step, necessary to define if call move event
@@ -342,7 +344,6 @@
             this.$element.trigger(PullToRefresh.namespace('move'), percentage);
             this.positions.lastStep = step;
         }
-
         // finally tranform element to current touch position
         this.transform(this.$element[0].style, delta);
 

@@ -1,32 +1,148 @@
-jQuery - Pull to Refresh
-==========
-
-Docs under contruction, if you want it now, please <a target="_blank" href="mailto:luis.kauffmann.silva@gmail.com?subject=GitHub%20-%20P2R%20Docs">send me an email</a> 
+##Download
 ---
 
-Options:
+jQuery Pull to Refresh is available to be downloaded from bower or github
 
-```javascript
 
-default = {
-  sensibility: 10, // number of pixels to each call of "move" event
-  refresh: 100, // value in pixels to fire "refresh" event
-  lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
-  resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
-  autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
-  resetVelocity: "100ms", // speed of reset animation in milliseconds
-  simulateTouch: true, // simulate touch events with mouse events
-  tolerance: 10 // integer with the threshold variation of the y axis
-}
+<div class='row' markdown='1'>
+    <div class='col-md-4 col-sm-12'>
+        <h3>
+            Bower
+        </h3>
+        <p>
+            <pre><code class='lang-shell'>$ bower install --save pulltorefresh</code></pre>
+        </p>
+        
+    </div>
+    <div class='col-md-4 col-sm-6'>
+        <h3>
+            Compacted
+        </h3>
+        <p>
+            <a href='https://github.com/luis-kaufmann-silva/jquery-p2r/archive/2.0.0.zip' class='btn btn-default btn-outline btn-lg btn-block'>
+                jquery-p2r.zip
+            </a>
+        </p>
+        
+    </div>
+    <div class='col-md-4 col-sm-6'>
+        <h3>
+            Source code
+        </h3>
+        <p>
+            <a href='https://github.com/luis-kaufmann-silva/jquery-p2r' class='btn btn-default btn-outline btn-lg btn-block'>
+                Github page
+            </a>
+        </p>
+        
+    </div>
+
+</div>
+
+##Instalation##
+---
+After download it, add after jQuery
+
+```html
+<!-- jQuery Pull to Refresh plugin -->
+<script src='path/to/jquery-p2r.min.js' type='text/javascript' defer></script>
 ```
 
-Events:
+##Simple example##
+---
 
-- `start.pulltorefresh`: Start of touch
-- `move.pulltorefresh`:  Touch move (see sensibility)
-- `end.pulltorefresh`: End of touch
-- `refresh.pulltorefresh`: when the value 'refresh' is reached
+A simple way to implement pull to refresh plugin
 
+```js
+$(document).ready(function (){
+    $("selector").pullToRefresh();
+})
+```
+
+
+#Events
+---
+
+## Start 
+
+Fires when the user touch or click the element (see [simulateTouch][1])
+
+**Example:**
+
+```js
+.on("start.pulltorefresh", function (evt, y){})
+```
+
+
+**Parameters:**
+-   `evt` Original event (mousedown or touchstart)
+-   `y` Position of element on Y axis
+
+---
+
+## Move
+
+Fires when the user move the element (see [sensibility][2])
+
+**Example:**
+
+```js
+.on("move.pulltorefresh", function (evt, percent){})
+```
+
+
+**Parameters:**
+-   `evt` Original event (mousemove or touchmove)
+-   `percent` Percentage of pull moviment based on option [refresh][3]
+
+---
+
+## End
+
+Fires when the touch event stop
+
+**Example:**
+
+```js
+.on("end.pulltorefresh", function (evt){})
+```
+
+
+**Parameters:**
+-   `evt` Original event (mouseup or touchend)
+
+---
+
+
+## Refresh
+
+Fires when the touch distance variation of the initial point to the end point is greater or equal to [refresh][3]
+
+**Example:**
+
+```js
+.on("refresh.pulltorefresh", function ($element, y){})
+```
+
+
+**Parameters:**
+-   `$element` jQuery element
+-   `y` Position of element on Y axis
+
+---
+
+
+##Examples of events
+
+All examples are hosted on codepen.io under tag <a href='http://codepen.io/tag/jquery-p2r/' target="_blank">jquery-p2r</a>
+
+<div data-trigger='codepen' data-autostart='true' data-hash="AkyLH"></div>
+
+
+
+  [1]: /options/#simulateTouch
+  [2]: /options/#sensibility
+  [3]: /options/#refresh
 
 ##Options
 ---
@@ -157,6 +273,9 @@ You can configure some properties to better adapt the plugin to your needs
     <div data-trigger='codepen' data-hash='olkhw'></div>
 
 </div>
+
+
+
 
 
 

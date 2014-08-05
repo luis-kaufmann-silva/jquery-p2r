@@ -19,7 +19,7 @@ jQuery Pull to Refresh is available to be downloaded from bower or github
             Compacted
         </h3>
         <p>
-            <a href='https://github.com/luis-kaufmann-silva/jquery-p2r/archive/2.0.0.zip' class='btn btn-default btn-outline btn-lg btn-block'>
+            <a href='https://github.com/luis-kaufmann-silva/jquery-p2r/archive/master.zip' class='btn btn-default btn-outline btn-lg btn-block'>
                 jquery-p2r.zip
             </a>
         </p>

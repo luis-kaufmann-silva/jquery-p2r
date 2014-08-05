@@ -1,0 +1,48 @@
+
+@bar-size: 70px;
+
+body{
+  padding-top: @bar-size;
+}
+
+.btn-outline {
+    color: #34495e;
+    background-color: transparent;
+    border-color: #34495e;
+}
+
+div{
+    &:target {
+        &:before{
+            padding-top: @bar-size;
+            content: '';
+            display: block;
+        }        
+    }
+}
+
+.show-link-hover{
+    &:hover{
+        a{
+            display: inline-block;
+        }
+    }
+    a{
+        display: none;
+    }
+
+
+}
+
+
+[data-trigger='codepen']{
+    padding-top: 10px;
+    min-height: 40px;
+    .btn{
+        margin: auto;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+}

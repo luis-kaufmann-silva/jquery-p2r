@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="author" content="Luis Felipe Kaufmann da Silva">
+    <meta name="keywords" content="pull2refresh, pull to refresh, p2r, jquery pull to refresh">
+    <meta name="description" content="A simple jQuery plugin to perform pull to refresh (p2r)">
+    <title>Events - jQuery Pull to Refresh
+    </title>
+    <link rel="me" href="https://plus.google.com/u/0/116734428787722672454">
+    <link rel="alternate" href="http://localhost:8080/feed.xml" type="application/rss+xml" title="The jQuery Pull to Refresh page">
+    <link rel="stylesheet" href="/assets/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/dist/dist.min.css"><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-ex1-collapse" class="navbar-toggle"><span class="sr-only">Toggle navigation</span>
+            <div class="icon-bar"></div>
+            <div class="icon-bar"></div>
+            <div class="icon-bar"></div>
+          </button><a href="/" class="navbar-brand">JQuery p2r</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/getting-started">Getting started</a></li>
+            <li class="active"><a href="/events">Events</a></li>
+            <li><a href="/options">Options</a></li>
+            <li><a href="http://github.com/luis-kaufmann-silva/jquery-p2r" target="_blank">Github</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#top">Top</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="page-wrap">
+      <div class="container">
+        <article class="article">
+          <section class="content"><h1 id="events">Events</h1>
+<hr>
+<h2 id="start">Start</h2>
+<p>Fires when the user touch or click the element (see <a href="/options/#simulateTouch">simulateTouch</a>)</p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-js">.on(<span class="string">"start.pulltorefresh"</span>, <span class="function"><span class="keyword">function</span> <span class="params">(evt, y)</span>{</span>})
+</code></pre>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>evt</code> Original event (mousedown or&nbsp;touchstart)</li>
+<li><code>y</code> Position of element on Y&nbsp;axis</li>
+</ul>
+<hr>
+<h2 id="move">Move</h2>
+<p>Fires when the user move the element (see <a href="/options/#sensibility">sensibility</a>)</p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-js">.on(<span class="string">"move.pulltorefresh"</span>, <span class="function"><span class="keyword">function</span> <span class="params">(evt, percent)</span>{</span>})
+</code></pre>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>evt</code> Original event (mousemove or&nbsp;touchmove)</li>
+<li><code>percent</code> Percentage of pull moviment based on option <a href="/options/#refresh">refresh</a></li>
+</ul>
+<hr>
+<h2 id="end">End</h2>
+<p>Fires when the touch event&nbsp;stop</p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-js">.on(<span class="string">"end.pulltorefresh"</span>, <span class="function"><span class="keyword">function</span> <span class="params">(evt)</span>{</span>})
+</code></pre>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>evt</code> Original event (mouseup or&nbsp;touchend)</li>
+</ul>
+<hr>
+<h2 id="refresh">Refresh</h2>
+<p>Fires when the touch distance variation of the initial point to the end point is greater or equal to <a href="/options/#refresh">refresh</a></p>
+<p><strong>Example:</strong></p>
+<pre><code class="lang-js">.on(<span class="string">"refresh.pulltorefresh"</span>, <span class="function"><span class="keyword">function</span> <span class="params">($element, y)</span>{</span>})
+</code></pre>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>$element</code> jQuery&nbsp;element</li>
+<li><code>y</code> Position of element on Y&nbsp;axis</li>
+</ul>
+<hr>
+<h2 id="examples-of-events">Examples of&nbsp;events</h2>
+<p>All examples are hosted on codepen.io under tag <a href='http://codepen.io/tag/jquery-p2r/' target="_blank">jquery-p2r</a></p>
+<div data-trigger='codepen' data-autostart='true' data-hash="AkyLH"></div>
+
+
+
+</section>
+        </article>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <center><em>This is under construction</em></center>
+      </div>
+    </footer>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/assets/dist/dist.min.js" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="/assets/lib/analytics.js" type="text/javascript" charset="utf-8" async defer></script>
+  </body>
+</html>

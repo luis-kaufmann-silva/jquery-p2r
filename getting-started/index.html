@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="author" content="Luis Felipe Kaufmann da Silva">
+    <meta name="keywords" content="pull2refresh, pull to refresh, p2r, jquery pull to refresh">
+    <meta name="description" content="A simple jQuery plugin to perform pull to refresh (p2r)">
+    <title>Getting started - jQuery Pull to Refresh
+    </title>
+    <link rel="me" href="https://plus.google.com/u/0/116734428787722672454">
+    <link rel="alternate" href="http://localhost:8080/feed.xml" type="application/rss+xml" title="The jQuery Pull to Refresh page">
+    <link rel="stylesheet" href="/assets/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/dist/dist.min.css"><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div role="navigation" class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target=".navbar-ex1-collapse" class="navbar-toggle"><span class="sr-only">Toggle navigation</span>
+            <div class="icon-bar"></div>
+            <div class="icon-bar"></div>
+            <div class="icon-bar"></div>
+          </button><a href="/" class="navbar-brand">JQuery p2r</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/getting-started">Getting started</a></li>
+            <li><a href="/events">Events</a></li>
+            <li><a href="/options">Options</a></li>
+            <li><a href="http://github.com/luis-kaufmann-silva/jquery-p2r" target="_blank">Github</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#top">Top</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="page-wrap">
+      <div class="container">
+        <article class="article">
+          <section class="content"><h2 id="download">Download</h2>
+<hr>
+<p>jQuery Pull to Refresh is available to be downloaded from bower or&nbsp;github</p>
+<div class='row' markdown='1'>
+    <div class='col-md-4 col-sm-12'>
+        <h3>
+            Bower
+        </h3>
+        <p>
+            <pre><code class='lang-shell'>$ bower install —save pulltorefresh</code></pre>
+        </p>
+
+    </div>
+    <div class='col-md-4 col-sm-6'>
+        <h3>
+            Compacted
+        </h3>
+        <p>
+            <a href='https://github.com/luis-kaufmann-silva/jquery-p2r/archive/2.0.0.zip' class='btn btn-default btn-outline btn-lg btn-block'>&nbsp;jquery-p2r.zip
+            </a>
+        </p>
+
+    </div>
+    <div class='col-md-4 col-sm-6'>
+        <h3>
+            Source&nbsp;code
+        </h3>
+        <p>
+            <a href='https://github.com/luis-kaufmann-silva/jquery-p2r' class='btn btn-default btn-outline btn-lg btn-block'>
+                Github&nbsp;page
+            </a>
+        </p>
+
+    </div>
+
+<p></div></p>
+<h2 id="instalation">Instalation</h2>
+<hr>
+<p>After download it, add after&nbsp;jQuery</p>
+<pre><code class="lang-html"><span class="comment">&lt;!-- jQuery Pull to Refresh plugin --&gt;</span>
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">'path/to/jquery-p2r.min.js'</span> <span class="attribute">type</span>=<span class="value">'text/javascript'</span> <span class="attribute">defer</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+</code></pre>
+<h2 id="simple-example">Simple&nbsp;example</h2>
+<hr>
+<p>A simple way to implement pull to refresh&nbsp;plugin</p>
+<pre><code class="lang-js">$(document).ready(<span class="function"><span class="keyword">function</span> <span class="params">()</span>{</span>
+    $(<span class="string">"selector"</span>).pullToRefresh();
+})
+</code></pre>
+</section>
+        </article>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <center><em>This is under construction</em></center>
+      </div>
+    </footer>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/assets/dist/dist.min.js" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="/assets/lib/analytics.js" type="text/javascript" charset="utf-8" async defer></script>
+  </body>
+</html>

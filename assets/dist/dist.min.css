@@ -1,0 +1,50 @@
+body {
+  padding-top: 70px;
+}
+.btn-outline {
+  color: #34495e;
+  background-color: transparent;
+  border-color: #34495e;
+}
+div:target:before {
+  padding-top: 70px;
+  content: '';
+  display: block;
+}
+.show-link-hover:hover a {
+  display: inline-block;
+}
+.show-link-hover a {
+  display: none;
+}
+[data-trigger='codepen'] {
+  padding-top: 10px;
+  min-height: 40px;
+}
+[data-trigger='codepen'] .btn {
+  margin: auto;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+* {
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+}
+.page-wrap {
+  min-height: 100%;
+  margin-bottom: -100px;
+}
+.page-wrap:after {
+  content: "";
+  display: block;
+}
+.footer,
+.page-wrap:after {
+  /* .push must be the same height as footer */
+  height: 100px;
+}

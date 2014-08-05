@@ -64,7 +64,7 @@ body{
 .lockRefresh:before{ content: 'lockRefresh'; }
 .resetRefresh:before{ content: 'resetRefresh'; }
 .autoInit:before{ content: 'autoInit'; }
-.resetVelocity:before{ content: 'resetVelocity'; }
+.resetSpeed:before{ content: 'resetSpeed'; }
 .simulateTouch:before{ content: 'simulateTouch'; }
 .tolerance:before{ content: 'tolerance'; }
 

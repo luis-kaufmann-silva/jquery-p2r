@@ -144,22 +144,17 @@ All examples are hosted on codepen.io under tag <a href='http://codepen.io/tag/j
   [2]: /options/#sensibility
   [3]: /options/#refresh
 
+
+
 ##Options
 ---
 
 You can configure some properties to better adapt the plugin to your needs
 
 <div id='sensibility'>
-    <div class='page-header'>
-        <h3 class='show-link-hover'>
-            <code>sensibility</code>
-            
-            <small>
-                <a href='#sensibility'>link</a>
-            </small>
-        
-        </h3>
-    </div>
+    <h3 class='show-link-hover'>
+        <code>sensibility</code>
+    </h3>
     <p>
         Number of pixels to each call of "move" event
     </p>
@@ -229,9 +224,9 @@ You can configure some properties to better adapt the plugin to your needs
 
 </div>
 
-<div id='resetVelocity'>
+<div id='resetSpeed'>
     <h3>
-        <code>resetVelocity</code>
+        <code>resetSpeed</code>
     </h3>
 
     <p>
@@ -273,9 +268,3 @@ You can configure some properties to better adapt the plugin to your needs
     <div data-trigger='codepen' data-hash='olkhw'></div>
 
 </div>
-
-
-
-
-
-

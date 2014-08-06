@@ -9,5 +9,6 @@
     a.src = g;
     m.parentNode.insertBefore(a, m)
 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-ga('create', 'UA-48136217-1', 'luis-kaufmann-silva.github.io');
+
+ga('create', 'UA-53558336-1', 'auto');
 ga('send', 'pageview');

@@ -1,3 +1,5 @@
+[![GitHub version](https://badge.fury.io/gh/luis-kaufmann-silva%2Fjquery-p2r.png)](http://badge.fury.io/gh/luis-kaufmann-silva%2Fjquery-p2r)
+
 ##Download
 ---
 

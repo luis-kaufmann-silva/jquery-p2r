@@ -364,7 +364,6 @@
         delta = (axis.y - this.positions.startY);
 
         // reset on horizontal scroll threshold fail
-        //console.log(Math.abs(axis.x - this.positions.startX))
         if (Math.abs(axis.x - this.positions.startX) > this.options.threshold) {
             this.reset();
             return;

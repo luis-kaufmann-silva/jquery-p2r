@@ -9,6 +9,7 @@
         this.$element = $(element);
         this.options = $.extend({}, self.DEFAULTS, options);
         this.flags = {
+            prevented: false,
             moving: false,
             touched: false,
             isTouch: false,
@@ -259,6 +260,11 @@
         var isTouchEvent = event.type === 'touchstart',
             axis = this.getAxis(event, isTouchEvent);
 
+        // only move element if this not has scroll
+        if (this.$element[0].scrollTop > 0) {
+            return true;
+        }
+
         // if not left click, cancel
         if (!isTouchEvent && event.which !== 1) {
             return;
@@ -275,8 +281,6 @@
 
         this.transition(this.$element[0].style, "0ms");
 
-        event.stopPropagation();
-        event.preventDefault();
     };
 
     /**
@@ -295,6 +299,15 @@
         // if not touched or hasTouchEvent and the eventType is a desktop event cancel the move
         if (!(this.flags.touched) || (this.flags.isTouch && event.type === 'mousemove')) {
             return;
+        }
+
+        // detect if element has click
+        if (!this.flags.prevented && event.target && (event.target.click || event.target.onclick)) {
+            $(event.target).off('click');
+            setTimeout(function () {
+                $(event.target).on('click');
+            }, 0);
+            this.flags.prevented = true;
         }
 
         // get axis pair
@@ -370,9 +383,12 @@
      * @method
      */
     PullToRefresh.prototype.onTouchEnd = function PullToRefresh__onTouchEnd(event) {
+
         if (!this.flags.touched) {
             return;
         }
+
+        this.flags.prevented = false;
 
         this.positions.startY = 0;
         this.positions.startX = 0;

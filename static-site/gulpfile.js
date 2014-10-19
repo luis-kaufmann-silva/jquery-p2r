@@ -69,14 +69,10 @@ gulp.task('twig-pages', function _gulp_twig_pages() {
         .pipe(gulp.dest(path.join(DIST, 'pages')));
 });
 
-
-
 gulp.task('bower', function _gulp_twig_pages() {
-    gulp.src(path.join(STATIC, 'bower.json'))
-        .pipe(gulp.dest(DIST));
     return bower({
-            directory: './static/bower_components',
-            cwd: DIST
+            directory: '../../../dist/static/bower_components',
+            cwd: STATIC
         })
         .pipe(gulp.dest(DIST))
 

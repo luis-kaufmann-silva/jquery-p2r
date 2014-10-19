@@ -1,0 +1,16 @@
+{
+    "name": "static-site",
+    "version": "0.0.0",
+    "authors": [],
+    "private": true,
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "jquery": "2.1.1"
+    }
+}

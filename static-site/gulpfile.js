@@ -17,6 +17,8 @@ var
     STATIC = './src/assets/static/',
     DIST = path.join(__dirname, './dist');
 
+var config = require('./config.json');
+
 var base_url = 'http://localhost:3000/';
 // TODO assets manager
 // var assets = 'http://localhost:3000/';
@@ -51,7 +53,8 @@ gulp.task('twig-index', function _gulp_twig_index() {
         .pipe(twig({
             base: TEMPLATE,
             data: {
-                base_url: base_url
+                base_url: base_url,
+                config: config
             }
         }))
         .pipe(gulp.dest(DIST));
@@ -63,7 +66,8 @@ gulp.task('twig-pages', function _gulp_twig_pages() {
         .pipe(twig({
             base: TEMPLATE,
             data: {
-                base_url: base_url
+                base_url: base_url,
+                config: config
             }
         }))
         .pipe(gulp.dest(path.join(DIST, 'pages')));
@@ -77,6 +81,5 @@ gulp.task('bower', function _gulp_twig_pages() {
         .pipe(gulp.dest(DIST))
 
 });
-
 
 gulp.task('default', ['less', 'js', 'twig-index', 'twig-pages', 'bower']);

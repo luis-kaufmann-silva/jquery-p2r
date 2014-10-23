@@ -1,13 +1,17 @@
 var
+    Twig = require('twig'),
+    plugin_twig_markdown = require('./utils/twig-markdown'),
     path = require('path'),
     gulp = require("gulp"),
     bower = require('gulp-bower'),
-    twig = require("gulp-twig"),
+    twig = require("./utils/gulp-twig"),
     concat = require("gulp-concat"),
     rename = require("gulp-rename"),
     less = require("gulp-less"),
     autoprefixer = require("gulp-autoprefixer"),
     uglify = require("gulp-uglify");
+
+Twig = plugin_twig_markdown(Twig);
 
 var
     BOWER = 'bower_components/',
@@ -64,6 +68,7 @@ gulp.task('twig-pages', function _gulp_twig_pages() {
     gulp
         .src(path.join(TEMPLATE, "pages/") + '*.twig')
         .pipe(twig({
+            twig: Twig,
             base: TEMPLATE,
             data: {
                 base_url: base_url,

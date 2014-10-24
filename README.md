@@ -1,4 +1,7 @@
-templates
-=========
+Static site
+======
 
-Repositório para templates
+
+```bash
+git clone -b static-site git@github.com:luis-kaufmann-silva/templates.git staticsite;
+```

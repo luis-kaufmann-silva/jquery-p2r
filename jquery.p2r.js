@@ -1,129 +1,5 @@
-/**
- * @module PullToRefresh
- *
- */
-+(function _pulltorefresh__module($) {
-    'use strict';
-
-    /**
-     * Interface to make common stufs
-     * @class Helper
-     * @param {Element} sel Element to posterior manipulation
-     * @example
-     * var h = new Helper(document);
-     *
-     */
-    var Helper = function (sel) {
-        // save the original element
-        this.$el = sel;
-    }
-
-    /**
-     * Remove listeners from $el
-     * @method
-     * @param  {string} event   Event name
-     * @param  {function} handler Original callback
-     * @return {object} charing object
-     */
-    Helper.prototype.off = function _off(event, handler) {
-        // remove namespace
-        (~event.indexOf('.')) && (event = event.split('.')[0]);
-
-        this.$el.removeEventListener(event, handler, true);
-
-        return this;
-    }
-
-
-    Helper.prototype.on = function _on(event, handler) {
-        // remove namespace
-        (~event.indexOf('.')) && (event = event.split('.')[0]);
-
-        this.$el.addEventListener(event, handler, true);
-
-        return this;
-    }
-
-    Helper.prototype.trigger = function _trigger(event, extra) {
-
-        var e = ('Event' in window && new Event(event)) || document.createEvent(event);
-
-        window.dispatchEvent(e);
-
-        return this;
-    }
-
-    //if ('jQuery' in window) {
-    $ = function _helper(sel) {
-        return new Helper(sel);
-    };
-    //}
-
-
-    /**
-     * Definition of class PullToRefresh
-     * @class PullToRefresh
-     * @param {Element} element Element that the action of "pull to refresh" will be executed
-     * @param {object} options Object with the custom configuration
-     * @example
-     * var el = document.getElementById('div1');
-     * var x = new PullToRefresh(el)
-     * var x = new PullToRefresh(el, { refresh: 10 })
-     */
-    var PullToRefresh = function (element, options) {
-        this.element = element;
-        this.$element = $(element);
-        this.options = {
-            sensibility: 1, // number of pixels to each call of "move" event
-            refresh: 200, // value in pixels to fire "refresh" event
-            lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
-            resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
-            autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
-            resetSpeed: "100ms", // speed of reset animation in milliseconds
-            simulateTouch: true, // simulate touch events with mouse events
-            threshold: 20 // integer with the threshold variation of the y axis
-        };
-
-        //self.DEFAULTS; //$.extend({}, self.DEFAULTS, options);
-        this.flags = {
-            moving: false,
-            touched: false,
-            isTouch: false,
-            refreshed: false,
-        };
-
-        this.positions = {
-            startY: 0,
-            startX: 0,
-            lastStep: 0,
-        }
-    };
-
-
-    // key to namespace events
-    PullToRefresh.key = 'pulltorefresh';
-
-    // preferences
-    PullToRefresh.DEFAULTS = {
-        sensibility: 5, // number of pixels to each call of "move" event
-        refresh: 200, // value in pixels to fire "refresh" event
-        lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
-        resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
-        autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
-        resetSpeed: "100ms", // speed of reset animation in milliseconds
-        simulateTouch: true, // simulate touch events with mouse events
-        threshold: 20 // integer with the threshold variation of the y axis
-    };
-
-    // namespace function to join event.namespace
-    PullToRefresh.namespace = function _pulltorefresh__namespace(eventName) {
-        return [
-            eventName,
-            PullToRefresh.key
-        ].join(".");
-    }
-
-    var Detector = {}
++(function _support_detector() {
+    var Detector = window.SupportDetector = {}
 
     Detector.support = {
         touch: (window.Modernizr && Modernizr.touch === true) || (function () {
@@ -132,7 +8,7 @@
         })(),
     };
 
-    Detector.events = (function () {
+    Detector.touchevents = (function () {
 
         if (Detector.support.touch) {
             return {
@@ -168,75 +44,82 @@
 
     })();
 
+})();
 
+/**
+ * @module PullToRefresh
+ *
+ */
++ (function _pulltorefresh__module(window, Detector) {
+    'use strict';
 
-    // support detection on touch events
-    // PullToRefresh.support = {
+    var support = new Detector(),
+        PullToRefresh;
 
-    //     touch: (window.Modernizr && Modernizr.touch === true) || (function () {
-    //         'use strict';
-    //         return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
-    //     })(),
+    /**
+     * Definition of class PullToRefresh
+     * @class PullToRefresh
+     * @param {Element} element Element that the action of "pull to refresh" will be executed
+     * @param {object} options Object with the custom configuration
+     * @version 2.0.7
+     * @since 2.0.7
+     * @example
+     * var el = document.getElementById('pulltorefresh');
+     * var x = new PullToRefresh(el)
+     * var x = new PullToRefresh(el, { refresh: 10 })
+     */
+    PullToRefresh = function (element, options) {
+        var i;
 
-    // };
+        this.element = element;
+        this.options = {
+            sensibility: 1, // number of pixels to each call of "move" event
+            refresh: 200, // value in pixels to fire "refresh" event
+            lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
+            resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
+            autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
+            resetSpeed: "100ms", // speed of reset animation in milliseconds
+            simulateTouch: true, // simulate touch events with mouse events
+            threshold: 20 // integer with the threshold variation of the y axis
+        };
 
-    // // events names based on browser support
-    // PullToRefresh.events = (function () {
+        for (i in options) {
+            (i in self.options) && (self.options[i] = options[i]);
+        }
 
-    //     if (PullToRefresh.support.touch) {
-    //         return {
-    //             start: PullToRefresh.namespace('touchstart'),
-    //             move: PullToRefresh.namespace('touchmove'),
-    //             end: PullToRefresh.namespace('touchend')
-    //         }
-    //     }
+        this.flags = {
+            moving: false,
+            touched: false,
+            isTouch: false,
+            refreshed: false,
+        };
 
-    //     var events = {
-    //         start: PullToRefresh.namespace('mousedown'),
-    //         move: PullToRefresh.namespace('mousemove'),
-    //         end: PullToRefresh.namespace('mouseup')
-    //     };
-
-    //     if (!!(window.navigator.msPointerEnabled)) {
-    //         events = {
-    //             start: PullToRefresh.namespace('MSPointerDown'),
-    //             move: PullToRefresh.namespace('MSPointerMove'),
-    //             end: PullToRefresh.namespace('MSPointerUp')
-    //         };
-    //     }
-
-    //     if (!!(window.navigator.pointerEnabled)) {
-    //         events = {
-    //             start: PullToRefresh.namespace('pointerdown'),
-    //             move: PullToRefresh.namespace('pointermove'),
-    //             end: PullToRefresh.namespace('pointerup')
-    //         };
-    //     }
-
-    //     return events;
-
-    // })();
+        this.positions = {
+            startY: 0,
+            startX: 0,
+            lastStep: 0,
+        }
+    };
 
 
     /**
      * Construct method to bind all events to respectives elements
      * @method
-     * @version 2.0.1
-     * @since 2.0.1
+     * @version 2.0.7
+     * @since 2.0.7
      * @method construct
      */
     PullToRefresh.prototype.construct = function _pulltorefresh__construct() {
         var self = this;
-        self.$element
-            .on(PullToRefresh.namespace(Detector.events.start), self.onTouchStart.bind(self))
-            .on(PullToRefresh.namespace(Detector.events.move), self.onTouchMove.bind(self))
-            .on(PullToRefresh.namespace(Detector.events.end), self.onTouchEnd.bind(self));
+
+        self.element.addEventListener(Detector.events.start, self.onTouchStart.bind(self), false)
+        self.element.addEventListener(Detector.events.move, self.onTouchMove.bind(self), false)
+        self.element.addEventListener(Detector.events.end, self.onTouchEnd.bind(self), false);
 
         if (self.options.simulateTouch) {
-            self.$element
-                .on(PullToRefresh.namespace('mousedown'), self.onTouchStart.bind(self))
-            $(document)
-                .on(PullToRefresh.namespace('mousemove'), self.onTouchMove.bind(self))
+            self.element.addEventListener('mousedown', self.onTouchStart.bind(self), false)
+            document
+                .addEventListener('mousemove', self.onTouchMove.bind(self))
                 .on(PullToRefresh.namespace('mouseup'), self.onTouchEnd.bind(self));
         }
     };
@@ -445,54 +328,6 @@
 
     };
 
-    // proxy function to trigger funcions with correct "this"
-    PullToRefresh.prototype.proxy = (function () {
-
-        var has_bind = !!(Function.prototype.bind);
-
-        // if browser supports bind, use it (why reinvent the wheel?)
-        if (has_bind) {
-            return function _pulltorefresh__bind(fn, context) {
-                return fn.bind(context);
-            }
-        } else {
-            // if lib has proxy
-            if ($.proxy) {
-                return $.proxy;
-            } else {
-                // else create it
-                return function _pulltorefresh__jquery_like_proxy(fn, context) {
-                    var tmp, args, proxy;
-
-                    if (typeof context === "string") {
-                        tmp = fn[context];
-                        context = fn;
-                        fn = tmp;
-                    }
-
-                    // Quick check to determine if target is callable, in the spec
-                    // this throws a TypeError, but we will just return undefined.
-                    if (typeof (fn) === 'function') {
-                        return undefined;
-                    }
-
-                    args = Array.prototype.slice.call(arguments, 2);
-
-                    // Simulated bind
-                    proxy = function () {
-                        return fn.apply(context || this, args.concat(slice.call(arguments)));
-                    };
-
-                    // Set the guid of unique handler to the same of original handler, so it can be removed
-                    proxy.guid = fn.guid = fn.guid || jQuery.guid++;
-
-                    return proxy;
-                }
-            }
-        }
-
-    })();
-
     window.PullToRefresh = PullToRefresh;
 
-})(window.jQuery || window.Zepto);
+})(window, window.SupportDetector);

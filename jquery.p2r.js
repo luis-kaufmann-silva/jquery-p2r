@@ -1,93 +1,14 @@
-+(function _support_detector() {
-    var Detector = window.SupportDetector = {}
-
-    Detector.support = {
-        touch: (window.Modernizr && Modernizr.touch === true) || (function () {
-            'use strict';
-            return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
-        })(),
-    };
-
-    Detector.touchevents = (function () {
-
-        if (Detector.support.touch) {
-            return {
-                start: 'touchstart',
-                move: 'touchmove',
-                end: 'touchend'
-            }
-        }
-
-        var events = {
-            start: 'mousedown',
-            move: 'mousemove',
-            end: 'mouseup'
-        };
-
-        if (!!(window.navigator.msPointerEnabled)) {
-            events = {
-                start: 'MSPointerDown',
-                move: 'MSPointerMove',
-                end: 'MSPointerUp'
-            };
-        }
-
-        if (!!(window.navigator.pointerEnabled)) {
-            events = {
-                start: 'pointerdown',
-                move: 'pointermove',
-                end: 'pointerup'
-            };
-        }
-
-        return events;
-
-    })();
-
-})();
-
-/**
- * @module PullToRefresh
- *
- */
-+ (function _pulltorefresh__module(window, Detector) {
++(function _pulltorefresh__module($) {
     'use strict';
 
-    var support = new Detector(),
-        PullToRefresh;
+    // PullToRefresh CLASS DEFINITION
+    // ==============================
 
-    /**
-     * Definition of class PullToRefresh
-     * @class PullToRefresh
-     * @param {Element} element Element that the action of "pull to refresh" will be executed
-     * @param {object} options Object with the custom configuration
-     * @version 2.0.7
-     * @since 2.0.7
-     * @example
-     * var el = document.getElementById('pulltorefresh');
-     * var x = new PullToRefresh(el)
-     * var x = new PullToRefresh(el, { refresh: 10 })
-     */
-    PullToRefresh = function (element, options) {
-        var i;
-
-        this.element = element;
-        this.options = {
-            sensibility: 1, // number of pixels to each call of "move" event
-            refresh: 200, // value in pixels to fire "refresh" event
-            lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
-            resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
-            autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
-            resetSpeed: "100ms", // speed of reset animation in milliseconds
-            simulateTouch: true, // simulate touch events with mouse events
-            threshold: 20 // integer with the threshold variation of the y axis
-        };
-
-        for (i in options) {
-            (i in self.options) && (self.options[i] = options[i]);
-        }
-
+    var PullToRefresh = function (element, options) {
+        this.$element = $(element);
+        this.options = $.extend({}, self.DEFAULTS, options);
         this.flags = {
+            prevented: false,
             moving: false,
             touched: false,
             isTouch: false,
@@ -102,25 +23,122 @@
     };
 
 
+    // static vars
+
+    // namespace to events
+    PullToRefresh.key = 'pulltorefresh';
+
+    // default options
+    PullToRefresh.DEFAULTS = {
+        orientation: 'down',
+        sensibility: 5, // number of pixels to each call of "move" event
+        refresh: 200, // value in pixels to fire "refresh" event
+        lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
+        resetRefresh: true, // indicates that the "reset" function will be called immediately when occur the event "refresh"
+        autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
+        resetSpeed: "100ms", // speed of reset animation in milliseconds
+        simulateTouch: true, // simulate touch events with mouse events
+        threshold: 20 // integer with the threshold variation of the y axis
+    };
+
+    // namespace function to join event.namespace
+    PullToRefresh.namespace = function _pulltorefresh__namespace(eventName) {
+        return [
+            eventName,
+            PullToRefresh.key
+        ].join(".");
+    }
+
+    // support detection on touch events
+    PullToRefresh.support = {
+
+        touch: (window.Modernizr && Modernizr.touch === true) || (function () {
+            'use strict';
+            return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+        })(),
+
+        // TODO future use
+        // transforms3d: (window.Modernizr && Modernizr.csstransforms3d === true) || (function () {
+        //     'use strict';
+        //     var div = document.createElement('div').style;
+        //     return ('webkitPerspective' in div || 'MozPerspective' in div || 'OPerspective' in div || 'MsPerspective' in div || 'perspective' in div);
+        // })(),
+
+        // transforms: (window.Modernizr && Modernizr.csstransforms === true) || (function () {
+        //     'use strict';
+        //     var div = document.createElement('div').style;
+        //     return ('transform' in div || 'WebkitTransform' in div || 'MozTransform' in div || 'msTransform' in div || 'MsTransform' in div || 'OTransform' in div);
+        // })(),
+
+        // transitions: (window.Modernizr && Modernizr.csstransitions === true) || (function () {
+        //     'use strict';
+        //     var div = document.createElement('div').style;
+        //     return ('transition' in div || 'WebkitTransition' in div || 'MozTransition' in div || 'msTransition' in div || 'MsTransition' in div || 'OTransition' in div);
+        // })(),
+
+        // classList: (function () {
+        //     'use strict';
+        //     var div = document.createElement('div').style;
+        //     return 'classList' in div;
+        // })()
+
+    };
+
+    // events names based on browser support
+    PullToRefresh.events = (function () {
+
+        if (PullToRefresh.support.touch) {
+            return {
+                start: PullToRefresh.namespace('touchstart'),
+                move: PullToRefresh.namespace('touchmove'),
+                end: PullToRefresh.namespace('touchend')
+            }
+        }
+
+        var events = {
+            start: PullToRefresh.namespace('mousedown'),
+            move: PullToRefresh.namespace('mousemove'),
+            end: PullToRefresh.namespace('mouseup')
+        };
+
+        if (!!(window.navigator.msPointerEnabled)) {
+            events = {
+                start: PullToRefresh.namespace('MSPointerDown'),
+                move: PullToRefresh.namespace('MSPointerMove'),
+                end: PullToRefresh.namespace('MSPointerUp')
+            };
+        }
+
+        if (!!(window.navigator.pointerEnabled)) {
+            events = {
+                start: PullToRefresh.namespace('pointerdown'),
+                move: PullToRefresh.namespace('pointermove'),
+                end: PullToRefresh.namespace('pointerup')
+            };
+        }
+
+        return events;
+
+    })();
+
+
     /**
      * Construct method to bind all events to respectives elements
      * @method
-     * @version 2.0.7
-     * @since 2.0.7
-     * @method construct
      */
     PullToRefresh.prototype.construct = function _pulltorefresh__construct() {
         var self = this;
-
-        self.element.addEventListener(Detector.events.start, self.onTouchStart.bind(self), false)
-        self.element.addEventListener(Detector.events.move, self.onTouchMove.bind(self), false)
-        self.element.addEventListener(Detector.events.end, self.onTouchEnd.bind(self), false);
+        self.$element
+            .on(PullToRefresh.events.start, self.proxy(self.onTouchStart, self))
+            .on(PullToRefresh.events.move, self.proxy(self.onTouchMove, self))
+            .on(PullToRefresh.events.end, self.proxy(self.onTouchEnd, self));
 
         if (self.options.simulateTouch) {
-            self.element.addEventListener('mousedown', self.onTouchStart.bind(self), false)
-            document
-                .addEventListener('mousemove', self.onTouchMove.bind(self))
-                .on(PullToRefresh.namespace('mouseup'), self.onTouchEnd.bind(self));
+            self.$element
+                .on(PullToRefresh.namespace('mousedown'), self.proxy(self.onTouchStart, self));
+            $(document)
+                .on(PullToRefresh.namespace('mousemove'), self.$element, self.proxy(self.onTouchMove, self))
+                .on(PullToRefresh.namespace('mouseup'), self.$element, self.proxy(self.onTouchEnd, self));
         }
     };
 
@@ -130,22 +148,61 @@
      */
     PullToRefresh.prototype.destroy = function _pulltorefresh__destroy() {
 
-        var self = this;
-
-        self.$element
-            .off(PullToRefresh.namespace(Detector.events.start), self.onTouchStart.bind(self))
-            .off(PullToRefresh.namespace(Detector.events.move), self.onTouchMove.bind(self))
-            .off(PullToRefresh.namespace(Detector.events.end), self.onTouchEnd.bind(self));
-
-        if (self.options.simulateTouch) {
-            self.$element
-                .off(PullToRefresh.namespace('mousedown'), self.onTouchStart.bind(self))
-                .off(PullToRefresh.namespace('mousemove'), self.onTouchMove.bind(self))
-                .off(PullToRefresh.namespace('mouseup'), self.onTouchEnd.bind(self));
-        }
+        this.$element
+            .off(PullToRefresh.namespace(''))
+        $(document)
+            .off(PullToRefresh.namespace(''))
 
     };
 
+
+    // proxy function to trigger funcions with correct "this"
+    PullToRefresh.prototype.proxy = (function () {
+
+        var has_bind = !!(Function.prototype.bind);
+
+        // if browser supports bind, use it (why reinvent the wheel?)
+        if (has_bind) {
+            return function _pulltorefresh__bind(fn, context) {
+                return fn.bind(context);
+            }
+        } else {
+            // if lib has proxy
+            if ($.proxy) {
+                return $.proxy;
+            } else {
+                // else create it
+                return function _pulltorefresh__jquery_like_proxy(fn, context) {
+                    var tmp, args, proxy;
+
+                    if (typeof context === "string") {
+                        tmp = fn[context];
+                        context = fn;
+                        fn = tmp;
+                    }
+
+                    // Quick check to determine if target is callable, in the spec
+                    // this throws a TypeError, but we will just return undefined.
+                    if (typeof (fn) === 'function') {
+                        return undefined;
+                    }
+
+                    args = Array.prototype.slice.call(arguments, 2);
+
+                    // Simulated bind
+                    proxy = function () {
+                        return fn.apply(context || this, args.concat(slice.call(arguments)));
+                    };
+
+                    // Set the guid of unique handler to the same of original handler, so it can be removed
+                    proxy.guid = fn.guid = fn.guid || jQuery.guid++;
+
+                    return proxy;
+                }
+            }
+        }
+
+    })();
 
     /**
      * Method to transform the Element in pixels
@@ -154,8 +211,8 @@
      * @method
      */
     PullToRefresh.prototype.transform = function _pulltorefresh__transform(style, value) {
-        //return false;
-        style.webkitTransform = 'translate(0px, ' + value + 'px) ' + 'translateZ(0px)';
+
+        style.webkitTransform = 'translate(0, ' + value + 'px) ' + 'translateZ(0)';
         style.msTransform =
             style.MsTransform =
             style.MozTransform =
@@ -195,7 +252,7 @@
     }
 
     /**
-     * Method to listen event start
+     * method to listen event start
      * @param  {MouseEvent|TouchEvent} event Original event fired by DOM
      * @method
      */
@@ -203,8 +260,13 @@
         var isTouchEvent = event.type === 'touchstart',
             axis = this.getAxis(event, isTouchEvent);
 
+        // only move element if this not has scroll
+        if (this.$element[0].scrollTop > 0) {
+            return true;
+        }
+
         // if not left click, cancel
-        if (!isTouchEvent && event.which !== 1 || this.flags.touched) {
+        if (!isTouchEvent && event.which !== 1) {
             return;
         }
 
@@ -217,10 +279,8 @@
 
         this.$element.trigger(PullToRefresh.namespace('start'), [axis.y])
 
-        this.transition(this.element.style, "0ms");
+        this.transition(this.$element[0].style, "0ms");
 
-        event.stopPropagation();
-        event.preventDefault();
     };
 
     /**
@@ -229,6 +289,7 @@
      * @method
      */
     PullToRefresh.prototype.onTouchMove = function _pulltorefresh__ontouchmove(event) {
+
         var isTouchEvent = event.type === 'touchmove',
             delta,
             step,
@@ -238,6 +299,15 @@
         // if not touched or hasTouchEvent and the eventType is a desktop event cancel the move
         if (!(this.flags.touched) || (this.flags.isTouch && event.type === 'mousemove')) {
             return;
+        }
+
+        // detect if element has click
+        if (!this.flags.prevented && event.target && (event.target.click || event.target.onclick)) {
+            $(event.target).off('click');
+            setTimeout(function () {
+                $(event.target).on('click');
+            }, 0);
+            this.flags.prevented = true;
         }
 
         // get axis pair
@@ -253,11 +323,13 @@
         }
 
         // not move with negative
-        if (delta < 0) return;
+         if (delta < 0 && this.options.orientation == 'down') return;
+         if (delta >= 0 && this.options.orientation == 'up') return;
+        // if (delta < 0) delta = delta * -1;
 
 
         // fires the refresh event if necessary and not has been triggered before
-        if (delta >= this.options.refresh && !this.flags.refreshed) {
+        if ((delta < 0 ? delta * -1 : delta) >= this.options.refresh && !this.flags.refreshed) {
 
             // fire refresh event
             this.$element.trigger(PullToRefresh.namespace('refresh'), [axis.y]);
@@ -287,7 +359,7 @@
             this.positions.lastStep = step;
         }
         // finally tranform element to current touch position
-        this.transform(this.element.style, delta);
+        this.transform(this.$element[0].style, delta);
 
         event.stopPropagation();
         event.preventDefault();
@@ -298,8 +370,8 @@
      * @method
      */
     PullToRefresh.prototype.reset = function _pulltorefresh__reset() {
-        this.transition(this.element.style, this.options.resetSpeed);
-        this.transform(this.element.style, 0);
+        this.transition(this.$element[0].style, this.options.resetSpeed);
+        this.transform(this.$element[0].style, 0);
         this.flags.touched = false;
         this.flags.isTouch = false;
         this.flags.refreshed = false;
@@ -312,9 +384,12 @@
      * @method
      */
     PullToRefresh.prototype.onTouchEnd = function PullToRefresh__onTouchEnd(event) {
+
         if (!this.flags.touched) {
             return;
         }
+
+        this.flags.prevented = false;
 
         this.positions.startY = 0;
         this.positions.startX = 0;
@@ -328,6 +403,48 @@
 
     };
 
-    window.PullToRefresh = PullToRefresh;
 
-})(window, window.SupportDetector);
+    // PullToRefresh PLUGIN DEFINITION
+    // ========================
+
+    var old = $.fn.pullToRefresh;
+
+    $.fn.pullToRefresh = function _pulltorefresh(option) {
+        return this.each(function () {
+
+            var $this = $(this);
+            var data = $this.data(PullToRefresh.key);
+
+            var options = $.extend({}, PullToRefresh.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+            if (!data && option == 'destroy') return
+
+            if (!data) {
+
+                $this.data(PullToRefresh.key, (data = new PullToRefresh(this, options)))
+
+                if (options.autoInit) {
+
+                    data.construct();
+                }
+            }
+
+            if (typeof option == 'string') {
+                data[option].apply(data)
+            }
+
+        });
+    };
+
+    $.fn.pullToRefresh.Constructor = PullToRefresh;
+
+
+    // PullToRefresh NO CONFLICT
+    // ==================
+
+    $.fn.pullToRefresh.noConflict = function () {
+        $.fn.pullToRefresh = old
+        return this
+    }
+
+})(window.jQuery || window.Zepto);

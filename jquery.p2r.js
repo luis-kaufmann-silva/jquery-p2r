@@ -31,10 +31,11 @@
 
     // default options
     PullToRefresh.DEFAULTS = {
+        orientation: "down", // define if is a pull-up-to-refresh or a pull-down-to-refresh
         sensibility: 5, // number of pixels to each call of "move" event
         refresh: 200, // value in pixels to fire "refresh" event
         lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
-        resetRefresh: false, // indicates that the "reset" function will be called immediately when occur the event "refresh"
+        resetRefresh: true, // indicates that the "reset" function will be called immediately when occur the event "refresh"
         autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
         resetSpeed: "100ms", // speed of reset animation in milliseconds
         simulateTouch: true, // simulate touch events with mouse events
@@ -322,13 +323,14 @@
             return;
         }
 
-        // not move with negative
-        if (delta < 0) return;
+        // move with negative, see #5
+        if (delta < 0 && this.options.orientation == 'down') return;
+        if (delta >= 0 && this.options.orientation == 'up') return;
 
 
 
         // fires the refresh event if necessary and not has been triggered before
-        if (delta >= this.options.refresh && !this.flags.refreshed) {
+        if ((delta < 0 ? delta * -1 : delta) >= this.options.refresh && !this.flags.refreshed) {
 
             // fire refresh event
             this.$element.trigger(PullToRefresh.namespace('refresh'), [axis.y]);

@@ -1,13 +1,11 @@
 +(function _pulltorefresh__module($) {
     'use strict';
 
-    // PullToRefresh CLASS DEFINITION
-    // ==============================
-
-
+    // Class Definition
     var PullToRefresh = function (element, options) {
         this.$element = $(element);
         this.options = $.extend({}, self.DEFAULTS, options);
+        this.$scroll = this.$element.find(options.scroll);
         this.flags = {
             prevented: false,
             moving: false,
@@ -24,8 +22,6 @@
     };
 
 
-    // static vars
-
     // namespace to events
     PullToRefresh.key = 'pulltorefresh';
 
@@ -39,8 +35,10 @@
         autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
         resetSpeed: "100ms", // speed of reset animation in milliseconds
         simulateTouch: true, // simulate touch events with mouse events
-        threshold: 20 // integer with the threshold variation of the y axis
+        threshold: 20, // integer with the threshold variation of the y axis
+        scroll: ".p2r-scroll" // class name to scroll element
     };
+
 
     // namespace function to join event.namespace
     PullToRefresh.namespace = function _pulltorefresh__namespace(eventName) {
@@ -57,31 +55,6 @@
             'use strict';
             return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
         })(),
-
-        // TODO future use
-        // transforms3d: (window.Modernizr && Modernizr.csstransforms3d === true) || (function () {
-        //     'use strict';
-        //     var div = document.createElement('div').style;
-        //     return ('webkitPerspective' in div || 'MozPerspective' in div || 'OPerspective' in div || 'MsPerspective' in div || 'perspective' in div);
-        // })(),
-
-        // transforms: (window.Modernizr && Modernizr.csstransforms === true) || (function () {
-        //     'use strict';
-        //     var div = document.createElement('div').style;
-        //     return ('transform' in div || 'WebkitTransform' in div || 'MozTransform' in div || 'msTransform' in div || 'MsTransform' in div || 'OTransform' in div);
-        // })(),
-
-        // transitions: (window.Modernizr && Modernizr.csstransitions === true) || (function () {
-        //     'use strict';
-        //     var div = document.createElement('div').style;
-        //     return ('transition' in div || 'WebkitTransition' in div || 'MozTransition' in div || 'msTransition' in div || 'MsTransition' in div || 'OTransition' in div);
-        // })(),
-
-        // classList: (function () {
-        //     'use strict';
-        //     var div = document.createElement('div').style;
-        //     return 'classList' in div;
-        // })()
 
     };
 
@@ -262,7 +235,7 @@
             axis = this.getAxis(event, isTouchEvent);
 
         // only move element if this not has scroll
-        if (this.$element[0].scrollTop > 0) {
+        if (this.$scroll.scrollTop() > 0) {
             return true;
         }
 
@@ -447,26 +420,5 @@
         $.fn.pullToRefresh = old
         return this
     }
-
-    // TODO create this V
-    // $(document).on('click.' + PullToRefresh.key + '.data-api', '[data-toggle="pulltorefresh"]', function (e) {
-    //     var $this = $(this)
-    //     var href = $this.attr('href')
-    //     var $target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))) // strip for ie7
-    //     var option = $target.data('bs.modal') ? 'toggle' : $.extend({
-    //         remote: !/#/.test(href) && href
-    //     }, $target.data(), $this.data())
-
-    //     if ($this.is('a')) e.preventDefault()
-
-    //     $target.one('show.bs.modal', function (showEvent) {
-    //         if (showEvent.isDefaultPrevented()) return // only register focus restorer if modal will actually get shown
-    //         $target.one('hidden.bs.modal', function () {
-    //             $this.is(':visible') && $this.trigger('focus')
-    //         })
-    //     })
-    //     Plugin.call($target, option, this)
-    // })
-
 
 })(window.jQuery || window.Zepto);

@@ -5,7 +5,7 @@
     var PullToRefresh = function (element, options) {
         this.$element = $(element);
         this.options = $.extend({}, self.DEFAULTS, options);
-        this.$scroll = this.$element.find(options.scroll);
+        this.$scroll = $(options.scroll);
         this.flags = {
             prevented: false,
             moving: false,

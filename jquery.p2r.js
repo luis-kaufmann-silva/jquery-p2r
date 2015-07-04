@@ -5,7 +5,7 @@
     var PullToRefresh = function (element, options) {
         this.$element = $(element);
         this.options = $.extend({}, self.DEFAULTS, options);
-        this.$scroll = this.$element.find(options.scroll);
+        this.$scroll = $(options.scroll);
         this.flags = {
             prevented: false,
             moving: false,
@@ -101,6 +101,7 @@
      * @method
      */
     PullToRefresh.prototype.construct = function _pulltorefresh__construct() {
+        console.log('contruct');
         var self = this;
         self.$element
             .on(PullToRefresh.events.start, self.proxy(self.onTouchStart, self))
@@ -117,16 +118,16 @@
     };
 
     /**
-     * Destroy method to remove all event listeners of element
+     * Destemoy method to remove all event listeners of element
      * @method
      */
     PullToRefresh.prototype.destroy = function _pulltorefresh__destroy() {
 
-        this.$element
-            .off(PullToRefresh.namespace(''))
-        $(document)
-            .off(PullToRefresh.namespace(''))
-
+        this.remove_transition(this.$element[0].style);
+        this.remove_transform(this.$element[0].style);
+        $(document).off(PullToRefresh.namespace(''));
+        this.$element.off(PullToRefresh.namespace(''));
+        this.$element.removeData('pulltorefresh');
     };
 
 
@@ -189,9 +190,9 @@
         style.webkitTransform = 'translate(0, ' + value + 'px) ' + 'translateZ(0)';
         style.msTransform =
             style.MsTransform =
-            style.MozTransform =
-            style.OTransform =
-            style.transform = 'translateY(' + value + 'px)';
+                style.MozTransform =
+                    style.OTransform =
+                        style.transform = 'translateY(' + value + 'px)';
     };
 
 
@@ -201,12 +202,39 @@
      * @param  {string} ms    css value to duration of transition
      * @method
      */
-    PullToRefresh.prototype.transition = function PullToRefresh__transition(style, ms) {
+    PullToRefresh.prototype.transition = function _pullToRefresh__transition(style, ms) {
         style.webkitTransitionDuration =
             style.MozTransitionDuration =
-            style.msTransitionDuration =
-            style.OTransitionDuration =
-            style.transitionDuration = ms;
+                style.msTransitionDuration =
+                    style.OTransitionDuration =
+                        style.transitionDuration = ms;
+    };
+
+    /**
+     * Method to remove transition on Element
+     * @param  {CSSProperies} style .style of Element
+     * @method
+     */
+    PullToRefresh.prototype.remove_transition = function _pullToRefresh__remove_transition(style) {
+        style.webkitTransitionDuration =
+            style.MozTransitionDuration =
+                style.msTransitionDuration =
+                    style.OTransitionDuration =
+                        style.transitionDuration = null;
+    };
+
+    /**
+     * Method to remove transformation on Element
+     * @param  {CSSProperties} style .style of Element
+     * @method
+     */
+    PullToRefresh.prototype.remove_transform = function _pulltorefresh__remove_transform(style) {
+        style.webkitTransform =
+            style.msTransform =
+                style.MsTransform =
+                    style.MozTransform =
+                        style.OTransform =
+                            style.transform = null;
     };
 
 
@@ -391,7 +419,7 @@
 
             var options = $.extend({}, PullToRefresh.DEFAULTS, $this.data(), typeof option == 'object' && option)
 
-            if (!data && option == 'destroy') return
+            if (!data && option == 'destroy') return PullToRefresh.destroy();
 
             if (!data) {
 

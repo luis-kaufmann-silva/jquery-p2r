@@ -101,7 +101,6 @@
      * @method
      */
     PullToRefresh.prototype.construct = function _pulltorefresh__construct() {
-        console.log('contruct');
         var self = this;
         self.$element
             .on(PullToRefresh.events.start, self.proxy(self.onTouchStart, self))

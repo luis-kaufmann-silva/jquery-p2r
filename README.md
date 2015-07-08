@@ -270,3 +270,20 @@ You can configure some properties to better adapt the plugin to your needs
     <div data-trigger='codepen' data-hash='olkhw'></div>
 
 </div>
+
+
+<div id='scroll'>
+    <h3>
+        <code>scroll</code>
+    </h3>
+
+    <p>
+        Selector to element scroll , this selector defines the element to be evaluated by "scrollTop()" when the event "onTouchMove" is executed. If $scroll.scrollTop() is bigger then zero, the refresh event is not executed.
+    </p>
+
+    <strong>default</strong>: <code>document</code>
+
+    <!-- <div data-trigger='codepen' data-hash='olkhw'></div> -->
+
+</div>
+

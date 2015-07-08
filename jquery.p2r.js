@@ -1,11 +1,15 @@
-+(function _pulltorefresh__module($) {
++(function _pulltorefresh__module($, document) {
     'use strict';
 
     // Class Definition
     var PullToRefresh = function (element, options) {
         this.$element = $(element);
+        
         this.options = $.extend({}, self.DEFAULTS, options);
+        
         this.$scroll = $(options.scroll);
+        
+        
         this.flags = {
             prevented: false,
             moving: false,
@@ -36,7 +40,7 @@
         resetSpeed: "100ms", // speed of reset animation in milliseconds
         simulateTouch: true, // simulate touch events with mouse events
         threshold: 20, // integer with the threshold variation of the y axis
-        scroll: ".p2r-scroll" // class name to scroll element
+        scroll: document // class name to scroll element
     };
 
 
@@ -261,7 +265,7 @@
         var isTouchEvent = event.type === 'touchstart',
             axis = this.getAxis(event, isTouchEvent);
 
-        // only move element if this not has scroll
+        // only move $element if $scroll do not have scroll
         if (this.$scroll.scrollTop() > 0) {
             return true;
         }
@@ -448,4 +452,4 @@
         return this
     }
 
-})(window.jQuery || window.Zepto);
+})(window.jQuery || window.Zepto, document);

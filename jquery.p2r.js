@@ -1,15 +1,27 @@
 +(function _pulltorefresh__module($, document) {
     'use strict';
 
+    var DEFAULTS = {
+        orientation: "down", // define if is a pull-up-to-refresh or a pull-down-to-refresh
+        sensibility: 5, // number of pixels to each call of "move" event
+        refresh: 200, // value in pixels to fire "refresh" event
+        lockRefresh: false, // indicates that the user can pull up to get the value "refresh"
+        resetRefresh: true, // indicates that the "reset" function will be called immediately when occur the event "refresh"
+        autoInit: true, // indicates that the "PullToRefresh" object must be built on startup "plugin"
+        resetSpeed: "100ms", // speed of reset animation in milliseconds
+        simulateTouch: true, // simulate touch events with mouse events
+        threshold: 20, // integer with the threshold variation of the y axis
+        scroll: document // class name to scroll element
+    };
+
     // Class Definition
     var PullToRefresh = function (element, options) {
         this.$element = $(element);
-        
-        this.options = $.extend({}, self.DEFAULTS, options);
-        
+
+        this.options = $.extend({}, DEFAULTS, options);
+
         this.$scroll = $(options.scroll);
-        
-        
+
         this.flags = {
             prevented: false,
             moving: false,
@@ -330,7 +342,6 @@
         // move with negative, see #5
         if (delta < 0 && this.options.orientation == 'down') return;
         if (delta >= 0 && this.options.orientation == 'up') return;
-
 
 
         // fires the refresh event if necessary and not has been triggered before

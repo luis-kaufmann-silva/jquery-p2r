@@ -1,12 +1,12 @@
 {
     "name": "jquery-pulltorefresh",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "homepage": "https://github.com/luis-kaufmann-silva/jquery-p2r",
     "authors": [
         "Luis Felipe <luis.kaufmann.silva@gmail.com>"
     ],
     "description": "jQuery plugin for pull to refresh (p2r)",
-    "main": "jquery.p2r.min.js",
+    "main": "jquery.p2r.js",
     "moduleType": [
         "amd"
     ],

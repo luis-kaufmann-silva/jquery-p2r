@@ -32,3 +32,4 @@ node_modules
 
 test/
 docs/
+.idea/

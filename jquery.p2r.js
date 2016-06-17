@@ -21,8 +21,8 @@
         this.positions = {
             startY: 0,
             startX: 0,
-            currentY : 0,
-            currentX : 0,
+			currentY : 0,
+			currentX : 0,
             lastStep: 0,
         }
     };

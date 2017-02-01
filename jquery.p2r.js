@@ -21,6 +21,8 @@
         this.positions = {
             startY: 0,
             startX: 0,
+            currentY : 0,
+            currentX : 0,
             lastStep: 0,
         }
     };
@@ -281,6 +283,8 @@
 
         this.positions.startY = axis.y;
         this.positions.startX = axis.x;
+        this.positions.currentY = axis.y;
+        this.positions.currentX = axis.x;
 
         this.$element.trigger(PullToRefresh.namespace('start'), [axis.y])
 
@@ -317,6 +321,8 @@
 
         // get axis pair
         axis = this.getAxis(event, isTouchEvent);
+        this.positions.currentY = axis.y;
+        this.positions.currentX = axis.x;
 
         // get variation of position between start y axis and current y axis
         delta = (axis.y - this.positions.startY);
@@ -396,15 +402,20 @@
 
         this.flags.prevented = false;
 
-        this.positions.startY = 0;
-        this.positions.startX = 0;
+        // get variation of position between start y axis and current y axis
+        var delta = (this.positions.currentY - this.positions.startY);
 
-        this.reset();
+        if (delta > 20) {
+            this.positions.startY = 0;
+            this.positions.startX = 0;
 
-        this.$element.trigger(PullToRefresh.namespace('end'));
+            this.reset();
 
-        event.stopPropagation();
-        event.preventDefault();
+            this.$element.trigger(PullToRefresh.namespace('end'));
+
+            event.stopPropagation();
+            event.preventDefault();
+        }
 
     };
 
